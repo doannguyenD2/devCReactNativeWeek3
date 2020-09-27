@@ -7,6 +7,9 @@ export default function App() {
   const [gamePrompt, setGamePrompt] = useState('Fire!');
   const [userChoice, setUserChoice] = useState({});
   const [computerChoice, setComputerChoice] = useState({});
+  const [totalGame, setTotalGame] = useState(0);
+  const [userWin, setUserWin] = useState(0);
+  const [userLose, setUserLose] = useState(0);
   const Button = props => (
     <TouchableOpacity
       style={styles.buttonStyle}
@@ -33,6 +36,10 @@ export default function App() {
   // };
   const onPress = playerChoice => {
     const [result, compChoice] = getRoundOutcome(playerChoice);
+    if (result == 'Victory!')
+      setUserWin(userWin + 1);
+    else if (result == 'Defeat!')
+      setUserLose(userLose + 1);
 
     const newUserChoice = CHOICES.find(choice => choice.name === playerChoice);
     const newComputerChoice = CHOICES.find(choice => choice.name === compChoice);
@@ -40,6 +47,7 @@ export default function App() {
     setGamePrompt(result);
     setUserChoice(newUserChoice);
     setComputerChoice(newComputerChoice);
+    setTotalGame(totalGame + 1);
   };
   const getRoundOutcome = userChoice => {
     const computerChoice = randomComputerChoice().name;
@@ -68,8 +76,10 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-    <Text style={{ fontSize: 35, color: getResultColor() }}>{gamePrompt}</Text>
-    <View style={styles.choicesContainer}>
+      <Text style={{ fontSize: 30, fontWeight: 'bold', color: getResultColor() }}>{gamePrompt}</Text>
+      <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#5B86E5' }}>You win {userWin}, as {Math.round(userWin * 100 / totalGame || 0)}%</Text>
+      <Text style={{ fontSize: 20, }}>Total game: {totalGame}, you lose {userLose} and tie {totalGame - userWin - userLose}</Text>
+      <View style={styles.choicesContainer}>
         <ChoiceCard
           player="Player"
           choice={userChoice}
@@ -104,10 +114,10 @@ const styles = StyleSheet.create({
     width: 200,
     margin: 10,
     height: 50,
-    borderRadius: 10,
+    borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#640D14',
+    backgroundColor: '#235EDD',
   },
   buttonText: {
     fontSize: 25,
@@ -118,6 +128,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderWidth: 2,
     paddingTop: 100,
+    borderRadius: 20,
     shadowRadius: 5,
     paddingBottom: 100,
     borderColor: 'grey',
@@ -135,13 +146,12 @@ const styles = StyleSheet.create({
   },
   choiceDescription: {
     fontSize: 25,
-    color: '#250902',
+    color: '#000000',
     fontWeight: 'bold',
-    textDecorationLine: 'underline'
   },
   choiceCardTitle: {
     fontSize: 30,
-    color: '#250902'
+    color: '#000000'
   },
   choiceImage: {
     width: 150,
